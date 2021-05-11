@@ -132,7 +132,6 @@ def act_grafico(hoverdata):
 
     fig = {
         'data': [trace1, trace2],
-
         'layout': go.Layout(
             title = "Compra y venta",
             xaxis=dict(title="Fecha"),
