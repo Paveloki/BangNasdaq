@@ -635,14 +635,6 @@ def estrategia_rsi(symbol):
     datos['posicion'] = posicion
     return preciocompra, precioventa, senalcompra, senalventa, datos
 
-    # plt.figure(figsize=(16, 12))
-    # plt.plot(df['Date'], df['Close'], label='Close')
-    # plt.scatter(senalventa, precioventa, s=120, c='red', label='Puntos de venta')
-    # plt.scatter(senalcompra, preciocompra, s=120, c='green', label='Puntos de compra')
-    # plt.title('RSI STRATEGY', size=20)
-    # plt.legend()
-    # plt.show()
-
 
 def mediana(lista):
     """
@@ -737,8 +729,15 @@ def medida_duracion(symbol, estrategia: str):
 
     pruebas = seleccion_estrategia(symbol, estrategia)
     lista = contador(symbol, pruebas)
-    med_buy = mediana(lista[0])
-    med_sell = mediana(lista[1])
+    if len(lista[0]) == 0:
+        med_buy = '-'
+    else:
+        med_buy = mediana(lista[0])
+
+    if len(lista[1]) == 0:
+        med_sell = '-'
+    else:
+        med_sell = mediana(lista[1])
 
     return med_buy, med_sell
 
@@ -777,11 +776,17 @@ def medida_efectividad(symbol, estrategia: str):
         if rends2[i] > 0:
             contadorv += 1
 
-    contac = str(round((contadorc / len(rends)) * 100, 2)) + ' %'
-    contav = str(round((contadorv / len(rends2)) * 100, 2)) + ' %'
+    if len(rends) == 0:
+        contac = '-'
+    else:
+        contac = str(round((contadorc / len(rends)) * 100, 2)) + ' %'
+
+    if len(rends2) == 0:
+        contav = '-'
+    else:
+        contav = str(round((contadorv / len(rends2)) * 100, 2)) + ' %'
 
     return contac, contav
-
 
 def medida_claridad(symbol, estrategia: str):
     """
@@ -853,53 +858,55 @@ def medida_claridad(symbol, estrategia: str):
 
 def CFA_sharperatio(symbol, estrategia: str):
     """
-    :param symbol:
-    :param estrategia:
-    :return:
+    :param symbol: Simbolo o ticker que el usuario decidira visualizar.
+    :param estrategia: Estrategia que se quiere visualizar, de deberan usar las siguientes palabras: 'macd', 'rsi',
+    'promedios', 'smi'
+    :return: Dataframe con el sharpe ratio de cada una de las senales generadas.
     """
-    precios = dt.precios.get(symbol)
-    pruebas = seleccion_estrategia(symbol, estrategia)
-    p1 = pruebas[0]
-    p2 = pruebas[1]
+    precios = dt.precios.get(symbol)  # Pedir datos/precios del simbolo a analizar.
+    pruebas = seleccion_estrategia(symbol, estrategia)  # Se selecciona la estrategia para obtener resultados de esta.
+    p1 = pruebas[0]  # Compra
+    p2 = pruebas[1]  # Venta
 
-    fechas1 = np.where(p1 == precios['Close'])
-    fechas2 = np.where(p2 == precios['Close'])
-    longitud = len(precios['Close'])
+    fechas1 = np.where(p1 == precios['Close'])  # Fechas en donde hubo senal de compra
+    fechas2 = np.where(p2 == precios['Close'])  # Fechas en donde hubo senal de venta
+    longitud = len(precios['Close'])  # Cuantos precios hay en las tablas.
 
-    dias_check = 5
-    contadorc = 0
-    contadorv = 0
+    dias_check = 5  # Se selecciono 5 dias porque al comparar con otros dias, este fue el de mejor resultados.
+    contadorc = 0  # Se inicia contador de compra
+    contadorv = 0  # Se inicia contador de venta
 
-    rends = [(precios['Close'][i + dias_check] - precios['Close'][i]) * 100 for i in fechas1[0]
-             if (i + dias_check) <= longitud]
+    rends = [(precios['Close'][i + dias_check] / precios['Close'][i]) - 1 for i in fechas1[0]
+             if (i + dias_check) <= longitud]  # Rendimientos de compra
     for i in range(len(rends)):
-        if rends[i] > 0:
-            contadorc += 1
+        if rends[i] > 0:  # Si los rendimientos en los periodos fueron mayores a 0 se cuenta un numero mas en la cuenta
+            contadorc += 1  # Se agrega 1 al contador de compra
 
-    rends2 = [(precios['Close'][i] - precios['Close'][i + dias_check]) * 100 for i in fechas2[0]
+    rends2 = [(precios['Close'][i] / precios['Close'][i + dias_check]) - 1 for i in fechas2[0]
               if (i + dias_check) <= longitud]
     for i in range(len(rends2)):
-        if rends2[i] > 0:
-            contadorv += 1
+        if rends2[i] > 0:  # Si los rendimientos en los periodos fueron mayores a 0 se cuenta un numero mas en la cuenta
+            contadorv += 1  # Se agrega 1 al contador de venta
 
-    scompra = [round((rends[i] - (dt.rf / 360 * 5)) / de(rends), 2) for i in range(len(rends))]
+    scompra = [round((rends[i] - (dt.rf / 360 * 5)) / de(rends), 2) for i in range(len(rends))]  # Sharpe ratio formula
     sventa = [round((rends2[i] - (dt.rf / 360 * 5)) / de(rends2), 2) for i in range(len(rends2))]
 
-    sharpesc = pd.DataFrame()
-    sharpesc['Fechas'] = fechas1[0]
-    sharpesc['Sharpe'] = scompra
+    sharpesc = pd.DataFrame()  # Se crea un dataframe
+    sharpesc['Fechas'] = [precios['Date'][fechas1[0][i]] for i in range(len(fechas1[0]))]  # Se agregan las fechas
+    sharpesc['Sharpe'] = scompra  # Se coloca la lista recien creada con la formula de Sharpe ratio. (COMPRA)
 
     sharpev = pd.DataFrame()
-    sharpev['Fechas'] = fechas2[0]
-    sharpev['Sharpe'] = sventa
+    sharpev['Fechas'] = [precios['Date'][fechas2[0][i]] for i in range(len(fechas2[0]))]
+    sharpev['Sharpe'] = sventa  # Se coloca la lista recien creada con la formula de Sharpe ratio. (VENTA)
     return sharpesc, sharpev
 
 
 def CFA_trackingerror(symbol, estrategia: str):
     """
-    :param symbol:
-    :param estrategia:
-    :return:
+    :param symbol: Simbolo o ticker que el usuario decidira visualizar.
+    :param estrategia: Estrategia que se quiere visualizar, de deberan usar las siguientes palabras: 'macd', 'rsi',
+    'promedios', 'smi'
+    :return: Dos numeros que son las desviaciones estandar con base en las senales de compra y de venta.
     """
     precios = dt.precios.get(symbol)
     pruebas = seleccion_estrategia(symbol, estrategia)
@@ -943,9 +950,11 @@ def CFA_trackingerror(symbol, estrategia: str):
 
     trades.append(trade)
 
-    estra = [trades[i] / 5 for i in range(len(trades))]
-
-    desviacion_trade = de(estra)
+    if len(trades) <= 1:
+        desviacion_trade = '-'
+    else:
+        estra = [trades[i] / 5 for i in range(len(trades))]
+        desviacion_trade = de(estra)
 
     fechaschidas2 = []
     indexamiento2 = []
@@ -980,8 +989,10 @@ def CFA_trackingerror(symbol, estrategia: str):
 
     trades2.append(trade2)
 
-    estra2 = [trades2[i] / 5 for i in range(len(trades2))]
-
-    desviacion_trade2 = de(estra2)
+    if len(trades2) <= 1:
+        desviacion_trade2 = '-'
+    else:
+        estra2 = [trades2[i] / 5 for i in range(len(trades2))]
+        desviacion_trade2 = de(estra2)
 
     return desviacion_trade, desviacion_trade2
