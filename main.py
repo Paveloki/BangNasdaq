@@ -10,6 +10,7 @@ from Sentiments_download import get_tweets
 import pandas as pd
 from dash_html_components import Br, Div
 from dash_table import DataTable
+import dash_auth
 
 
 activo = 'FB'
@@ -148,7 +149,11 @@ def recomendation(df):
 
 
 #%%
+# USUARIOS = [["Bangnasdaq","2021"]]
+
 app = dash.Dash()
+# auth = dash_auth.BasicAuth(app, USUARIOS)
+# server = app.server
 
 # DEFINICIÓN LAYOUT
 app.layout = html.Div([
@@ -497,9 +502,9 @@ def actualizar_table_estrategia1(Stock):
     effect_data_frame["Efectividad Señal Compra"] = effect[0]
     effect_data_frame["Efectividad Señal Venta"] = effect[1]
     trackingerror = ft.CFA_trackingerror(Stock, 'promedios')
-    trackingerror_data_frame = pd.DataFrame(columns = ["Señal Compra","Señal Venta"], index=range(1,2))
-    trackingerror_data_frame["Señal Compra"] = trackingerror[0]
-    trackingerror_data_frame["Señal Venta"] = trackingerror[1]
+    trackingerror_data_frame = pd.DataFrame(columns = ["Trackingerror Compra","Trackingerror Venta"], index=range(1,2))
+    trackingerror_data_frame["Trackingerror Compra"] = trackingerror[0]
+    trackingerror_data_frame["Trackingerror Venta"] = trackingerror[1]
 
 
     columns1 = [{"name": i, "id": i } for i in radio_sharpe_buy.columns]
@@ -515,35 +520,40 @@ def actualizar_table_estrategia1(Stock):
     data5 = trackingerror_data_frame.to_dict('records')
 
     return Div([
-        DataTable(columns=columns1, data=data1, style_header={'backgroundColor': 'rgb(30, 30, 30)'},
-            style_cell={
-        'backgroundColor': 'rgb(25,25,112)',
-        'color': 'white',
-    },),
+        DataTable(columns=columns1, data=data1, style_header={'backgroundColor': 'rgb(30, 30, 30)',
+                                                              'fontWeight': 'bold', 'color': 'gray',
+                                                              'textAlign': 'left'},
+                  style_cell={'backgroundColor': 'rgb(220,220,220)',
+                              'color': 'black', 'textAlign': 'left'}
+                  ,),
         Br(),
-        DataTable(columns=columns2, data=data2, style_header={'backgroundColor': 'rgb(30, 30, 30)'},
-            style_cell={
-        'backgroundColor': 'rgb(25,25,112)',
-        'color': 'white'
-    },),
+        DataTable(columns=columns2, data=data2, style_header={'backgroundColor': 'rgb(30, 30, 30)',
+                                                              'fontWeight': 'bold', 'color': 'gray',
+                                                              'textAlign': 'left'},
+                  style_cell={'backgroundColor': 'rgb(220,220,220)',
+                              'color': 'black', 'textAlign': 'left'}
+                  ,),
         Br(),
-        DataTable(columns=columns3, data=data3, style_header={'backgroundColor': 'rgb(30, 30, 30)'},
-            style_cell={
-        'backgroundColor': 'rgb(47,79,79)',
-        'color': 'white'
-    },),
+        DataTable(columns=columns3, data=data3, style_header={'backgroundColor': 'rgb(30, 30, 30)',
+                                                              'fontWeight': 'bold', 'color': 'gray',
+                                                              'textAlign': 'left'},
+                  style_cell={'backgroundColor': 'rgb(220,220,220)',
+                              'color': 'black', 'textAlign': 'left'}
+                  ,),
         Br(),
-        DataTable(columns=columns4, data=data4, style_header={'backgroundColor': 'rgb(30, 30, 30)'},
-            style_cell={
-        'backgroundColor': 'rgb(47,79,79)',
-        'color': 'white'
-    },),
+        DataTable(columns=columns4, data=data4, style_header={'backgroundColor': 'rgb(30, 30, 30)',
+                                                              'fontWeight': 'bold', 'color': 'gray',
+                                                              'textAlign': 'left'},
+                  style_cell={'backgroundColor': 'rgb(220,220,220)',
+                              'color': 'black', 'textAlign': 'left'}
+                  ,),
         Br(),
-        DataTable(columns=columns5, data=data5, style_header={'backgroundColor': 'rgb(30, 30, 30)'},
-            style_cell={
-        'backgroundColor': 'rgb(47,79,79)',
-        'color': 'white'
-    },),
+        DataTable(columns=columns5, data=data5, style_header={'backgroundColor': 'rgb(30, 30, 30)',
+                                                              'fontWeight': 'bold', 'color': 'gray',
+                                                              'textAlign': 'left'},
+                  style_cell={'backgroundColor': 'rgb(220,220,220)',
+                              'color': 'black', 'textAlign': 'left'}
+                  ,),
                 ])
 
 
@@ -605,9 +615,9 @@ def actualizar_table_estrategia2(Stock):
     effect_data_frame["Efectividad Señal Compra"] = effect[0]
     effect_data_frame["Efectividad Señal Venta"] = effect[1]
     trackingerror = ft.CFA_trackingerror(Stock, 'smi')
-    trackingerror_data_frame = pd.DataFrame(columns = ["Señal Compra","Señal Venta"], index=range(1,2))
-    trackingerror_data_frame["Señal Compra"] = trackingerror[0]
-    trackingerror_data_frame["Señal Venta"] = trackingerror[1]
+    trackingerror_data_frame = pd.DataFrame(columns = ["Trackingerror Compra","Trackingerror Venta"], index=range(1,2))
+    trackingerror_data_frame["Trackingerror Compra"] = trackingerror[0]
+    trackingerror_data_frame["Trackingerror Venta"] = trackingerror[1]
 
     columns1 = [{"name": i, "id": i } for i in radio_sharpe_buy.columns]
     columns2 = [{"name": i, "id": i} for i in radio_sharpe_sell.columns]
@@ -622,35 +632,40 @@ def actualizar_table_estrategia2(Stock):
     data5 = trackingerror_data_frame.to_dict('records')
 
     return Div([
-        DataTable(columns=columns1, data=data1, style_header={'backgroundColor': 'rgb(30, 30, 30)'},
-            style_cell={
-        'backgroundColor': 'rgb(25,25,112)',
-        'color': 'white',
-    },),
+        DataTable(columns=columns1, data=data1, style_header={'backgroundColor': 'rgb(30, 30, 30)',
+                                                              'fontWeight': 'bold', 'color': 'gray',
+                                                              'textAlign': 'left'},
+                  style_cell={'backgroundColor': 'rgb(220,220,220)',
+                              'color': 'black', 'textAlign': 'left'}
+                  ,),
         Br(),
-        DataTable(columns=columns2, data=data2, style_header={'backgroundColor': 'rgb(30, 30, 30)'},
-            style_cell={
-        'backgroundColor': 'rgb(25,25,112)',
-        'color': 'white'
-    },),
+        DataTable(columns=columns2, data=data2, style_header={'backgroundColor': 'rgb(30, 30, 30)',
+                                                              'fontWeight': 'bold', 'color': 'gray',
+                                                              'textAlign': 'left'},
+                  style_cell={'backgroundColor': 'rgb(220,220,220)',
+                              'color': 'black', 'textAlign': 'left'}
+                  ,),
         Br(),
-        DataTable(columns=columns3, data=data3, style_header={'backgroundColor': 'rgb(30, 30, 30)'},
-            style_cell={
-        'backgroundColor': 'rgb(47,79,79)',
-        'color': 'white'
-    },),
+        DataTable(columns=columns3, data=data3, style_header={'backgroundColor': 'rgb(30, 30, 30)',
+                                                              'fontWeight': 'bold', 'color': 'gray',
+                                                              'textAlign': 'left'},
+                  style_cell={'backgroundColor': 'rgb(220,220,220)',
+                              'color': 'black', 'textAlign': 'left'}
+                  ,),
         Br(),
-        DataTable(columns=columns4, data=data4, style_header={'backgroundColor': 'rgb(30, 30, 30)'},
-            style_cell={
-        'backgroundColor': 'rgb(47,79,79)',
-        'color': 'white'
-    },),
+        DataTable(columns=columns4, data=data4, style_header={'backgroundColor': 'rgb(30, 30, 30)',
+                                                              'fontWeight': 'bold', 'color': 'gray',
+                                                              'textAlign': 'left'},
+                  style_cell={'backgroundColor': 'rgb(220,220,220)',
+                              'color': 'black', 'textAlign': 'left'}
+                  ,),
         Br(),
-        DataTable(columns=columns5, data=data5, style_header={'backgroundColor': 'rgb(30, 30, 30)'},
-            style_cell={
-        'backgroundColor': 'rgb(47,79,79)',
-        'color': 'white'
-    },),
+        DataTable(columns=columns5, data=data5, style_header={'backgroundColor': 'rgb(30, 30, 30)',
+                                                              'fontWeight': 'bold', 'color': 'gray',
+                                                              'textAlign': 'left'},
+                  style_cell={'backgroundColor': 'rgb(220,220,220)',
+                              'color': 'black', 'textAlign': 'left'}
+                  ,),
                 ])
 
 
@@ -713,9 +728,9 @@ def actualizar_table_estrategia3(Stock):
     effect_data_frame["Efectividad Señal Compra"] = effect[0]
     effect_data_frame["Efectividad Señal Venta"] = effect[1]
     trackingerror = ft.CFA_trackingerror(Stock, 'rsi')
-    trackingerror_data_frame = pd.DataFrame(columns = ["Señal Compra","Señal Venta"], index=range(1,2))
-    trackingerror_data_frame["Señal Compra"] = trackingerror[0]
-    trackingerror_data_frame["Señal Venta"] = trackingerror[1]
+    trackingerror_data_frame = pd.DataFrame(columns = ["Trackingerror Compra","Trackingerror Venta"], index=range(1,2))
+    trackingerror_data_frame["Trackingerror Compra"] = trackingerror[0]
+    trackingerror_data_frame["Trackingerror Venta"] = trackingerror[1]
 
     columns1 = [{"name": i, "id": i } for i in radio_sharpe_buy.columns]
     columns2 = [{"name": i, "id": i} for i in radio_sharpe_sell.columns]
@@ -730,35 +745,40 @@ def actualizar_table_estrategia3(Stock):
     data5 = trackingerror_data_frame.to_dict('records')
 
     return Div([
-        DataTable(columns=columns1, data=data1, style_header={'backgroundColor': 'rgb(30, 30, 30)'},
-            style_cell={
-        'backgroundColor': 'rgb(25,25,112)',
-        'color': 'white',
-    },),
+        DataTable(columns=columns1, data=data1, style_header={'backgroundColor': 'rgb(30, 30, 30)',
+                                                              'fontWeight': 'bold', 'color': 'gray',
+                                                              'textAlign': 'left'},
+                  style_cell={'backgroundColor': 'rgb(220,220,220)',
+                              'color': 'black', 'textAlign': 'left'}
+                  ,),
         Br(),
-        DataTable(columns=columns2, data=data2, style_header={'backgroundColor': 'rgb(30, 30, 30)'},
-            style_cell={
-        'backgroundColor': 'rgb(25,25,112)',
-        'color': 'white'
-    },),
+        DataTable(columns=columns2, data=data2, style_header={'backgroundColor': 'rgb(30, 30, 30)',
+                                                              'fontWeight': 'bold', 'color': 'gray',
+                                                              'textAlign': 'left'},
+                  style_cell={'backgroundColor': 'rgb(220,220,220)',
+                              'color': 'black', 'textAlign': 'left'}
+                  ,),
         Br(),
-        DataTable(columns=columns3, data=data3, style_header={'backgroundColor': 'rgb(30, 30, 30)'},
-            style_cell={
-        'backgroundColor': 'rgb(47,79,79)',
-        'color': 'white'
-    },),
+        DataTable(columns=columns3, data=data3, style_header={'backgroundColor': 'rgb(30, 30, 30)',
+                                                              'fontWeight': 'bold', 'color': 'gray',
+                                                              'textAlign': 'left'},
+                  style_cell={'backgroundColor': 'rgb(220,220,220)',
+                              'color': 'black', 'textAlign': 'left'}
+                  ,),
         Br(),
-        DataTable(columns=columns4, data=data4, style_header={'backgroundColor': 'rgb(30, 30, 30)'},
-            style_cell={
-        'backgroundColor': 'rgb(47,79,79)',
-        'color': 'white'
-    },),
+        DataTable(columns=columns4, data=data4, style_header={'backgroundColor': 'rgb(30, 30, 30)',
+                                                              'fontWeight': 'bold', 'color': 'gray',
+                                                              'textAlign': 'left'},
+                  style_cell={'backgroundColor': 'rgb(220,220,220)',
+                              'color': 'black', 'textAlign': 'left'}
+                  ,),
         Br(),
-        DataTable(columns=columns5, data=data5, style_header={'backgroundColor': 'rgb(30, 30, 30)'},
-            style_cell={
-        'backgroundColor': 'rgb(47,79,79)',
-        'color': 'white'
-    },),
+        DataTable(columns=columns5, data=data5, style_header={'backgroundColor': 'rgb(30, 30, 30)',
+                                                              'fontWeight': 'bold', 'color': 'gray',
+                                                              'textAlign': 'left'},
+                  style_cell={'backgroundColor': 'rgb(220,220,220)',
+                              'color': 'black', 'textAlign': 'left'}
+                  ,),
                 ])
 
 
@@ -820,9 +840,9 @@ def actualizar_table_estrategia4(Stock):
     effect_data_frame["Efectividad Señal Compra"] = effect[0]
     effect_data_frame["Efectividad Señal Venta"] = effect[1]
     trackingerror = ft.CFA_trackingerror(Stock, 'macd')
-    trackingerror_data_frame = pd.DataFrame(columns = ["Señal Compra","Señal Venta"], index=range(1,2))
-    trackingerror_data_frame["Señal Compra"] = trackingerror[0]
-    trackingerror_data_frame["Señal Venta"] = trackingerror[1]
+    trackingerror_data_frame = pd.DataFrame(columns = ["Trackingerror Compra","Trackingerror Venta"], index=range(1,2))
+    trackingerror_data_frame["Trackingerror Compra"] = trackingerror[0]
+    trackingerror_data_frame["Trackingerror Venta"] = trackingerror[1]
 
 
     columns1 = [{"name": i, "id": i } for i in radio_sharpe_buy.columns]
@@ -838,35 +858,40 @@ def actualizar_table_estrategia4(Stock):
     data5 = trackingerror_data_frame.to_dict('records')
 
     return Div([
-        DataTable(columns=columns1, data=data1, style_header={'backgroundColor': 'rgb(30, 30, 30)'},
-            style_cell={
-        'backgroundColor': 'rgb(25,25,112)',
-        'color': 'white',
-    },),
+        DataTable(columns=columns1, data=data1, style_header={'backgroundColor': 'rgb(30, 30, 30)',
+                                                              'fontWeight': 'bold', 'color': 'gray',
+                                                              'textAlign': 'left'},
+                  style_cell={'backgroundColor': 'rgb(220,220,220)',
+                              'color': 'black', 'textAlign': 'left'}
+                  ,),
         Br(),
-        DataTable(columns=columns2, data=data2, style_header={'backgroundColor': 'rgb(30, 30, 30)'},
-            style_cell={
-        'backgroundColor': 'rgb(25,25,112)',
-        'color': 'white'
-    },),
+        DataTable(columns=columns2, data=data2, style_header={'backgroundColor': 'rgb(30, 30, 30)',
+                                                              'fontWeight': 'bold', 'color': 'gray',
+                                                              'textAlign': 'left'},
+                  style_cell={'backgroundColor': 'rgb(220,220,220)',
+                              'color': 'black', 'textAlign': 'left'}
+                  ,),
         Br(),
-        DataTable(columns=columns3, data=data3, style_header={'backgroundColor': 'rgb(30, 30, 30)'},
-            style_cell={
-        'backgroundColor': 'rgb(47,79,79)',
-        'color': 'white'
-    },),
+        DataTable(columns=columns3, data=data3, style_header={'backgroundColor': 'rgb(30, 30, 30)',
+                                                              'fontWeight': 'bold', 'color': 'gray',
+                                                              'textAlign': 'left'},
+                  style_cell={'backgroundColor': 'rgb(220,220,220)',
+                              'color': 'black', 'textAlign': 'left'}
+                  ,),
         Br(),
-        DataTable(columns=columns4, data=data4, style_header={'backgroundColor': 'rgb(30, 30, 30)'},
-            style_cell={
-        'backgroundColor': 'rgb(47,79,79)',
-        'color': 'white'
-    },),
+        DataTable(columns=columns4, data=data4, style_header={'backgroundColor': 'rgb(30, 30, 30)',
+                                                              'fontWeight': 'bold', 'color': 'gray',
+                                                              'textAlign': 'left'},
+                  style_cell={'backgroundColor': 'rgb(220,220,220)',
+                              'color': 'black', 'textAlign': 'left'}
+                  ,),
         Br(),
-        DataTable(columns=columns5, data=data5, style_header={'backgroundColor': 'rgb(30, 30, 30)'},
-            style_cell={
-        'backgroundColor': 'rgb(47,79,79)',
-        'color': 'white'
-    },),
+        DataTable(columns=columns5, data=data5, style_header={'backgroundColor': 'rgb(30, 30, 30)',
+                                                              'fontWeight': 'bold', 'color': 'gray',
+                                                              'textAlign': 'left'},
+                  style_cell={'backgroundColor': 'rgb(220,220,220)',
+                              'color': 'black', 'textAlign': 'left'}
+                  ,),
                 ])
 
 # Sentencias para abrir el servidor al ejecutar este script
